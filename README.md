@@ -12,38 +12,31 @@ pi install /path/to/oh-my-pi
 # pi install npm:oh-my-pi
 ```
 
-## Keywords
+## Skills
 
-Type these anywhere in your prompt to auto-route:
-
-| Keyword | Skill | Description |
-|---------|-------|-------------|
-| `$ralph` | ralph | Persistent completion loop (execute → verify → fix) |
-| `$ralplan` | ralplan | Multi-reviewer consensus planning |
-| `$interview` | deep-interview | Structured clarification before implementation |
-| `$explore` | explore | Read-only reconnaissance mode |
-| `$sparkshell` | sparkshell | Language-aware bounded shell commands |
+| Command | Description |
+|---------|-------------|
+| `/skill:ralph [task]` | Persistent completion loop (execute → verify → fix) |
+| `/skill:ralplan [task]` | Multi-reviewer consensus planning |
+| `/skill:deep-interview [topic]` | Structured clarification before implementation |
+| `/skill:explore [prompt]` | Read-only reconnaissance mode |
+| `/skill:sparkshell [cmd]` | Language-aware bounded shell commands |
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/ralph [task]` | Start persistent completion loop |
-| `/ralplan [task]` | Start consensus planning workflow |
-| `/interview [topic]` | Start structured clarification |
-| `/explore [prompt]` | Read-only reconnaissance |
-| `/sparkshell [cmd]` | Bounded shell command |
-| `/team [action]` | Manage multi-agent teams |
-| `/hud` | Toggle HUD dashboard |
-| `/omx` | Show all keywords and commands |
+| `/team [action]` | Manage multi-agent team sessions |
+| `/hud` | Show team status dashboard |
+| `/omx` | List all available skills and commands |
 
 ## Workflow
 
 The canonical workflow mirrors OMX:
 
-1. `$interview` — clarify scope when requirements are vague
-2. `$ralplan` — turn clarified scope into an approved plan (architect + critic consensus)
-3. `$ralph` — execute the plan with persistent verify/fix loops
+1. `/skill:deep-interview` — clarify scope when requirements are vague
+2. `/skill:ralplan` — turn clarified scope into an approved plan (architect + critic consensus)
+3. `/skill:ralph` — execute the plan with persistent verify/fix loops
 4. `/team` — use for coordinated parallel execution when work is large
 
 ## What's Inside

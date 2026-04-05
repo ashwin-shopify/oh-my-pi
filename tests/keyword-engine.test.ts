@@ -1,66 +1,6 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
-import { detectKeyword, classifyTaskSize, KEYWORD_ROUTES } from "../lib/keyword-engine.js";
-
-describe("detectKeyword", () => {
-  it("detects $ralph with task", () => {
-    const result = detectKeyword("$ralph fix the failing tests");
-    assert.ok(result);
-    assert.equal(result.route.skill, "ralph");
-    assert.equal(result.rest, "fix the failing tests");
-  });
-
-  it("detects $ralplan with task", () => {
-    const result = detectKeyword("$ralplan add user authentication");
-    assert.ok(result);
-    assert.equal(result.route.skill, "ralplan");
-    assert.equal(result.rest, "add user authentication");
-  });
-
-  it("detects $interview", () => {
-    const result = detectKeyword("$interview auth feature scope");
-    assert.ok(result);
-    assert.equal(result.route.skill, "deep-interview");
-    assert.equal(result.rest, "auth feature scope");
-  });
-
-  it("detects $explore", () => {
-    const result = detectKeyword("$explore where is auth handled");
-    assert.ok(result);
-    assert.equal(result.route.skill, "explore");
-  });
-
-  it("detects $sparkshell", () => {
-    const result = detectKeyword("$sparkshell git log --oneline -5");
-    assert.ok(result);
-    assert.equal(result.route.skill, "sparkshell");
-    assert.equal(result.rest, "git log --oneline -5");
-  });
-
-  it("returns null for non-keyword input", () => {
-    assert.equal(detectKeyword("fix the tests"), null);
-    assert.equal(detectKeyword("help me debug"), null);
-    assert.equal(detectKeyword(""), null);
-  });
-
-  it("handles keyword with no task", () => {
-    const result = detectKeyword("$ralph");
-    assert.ok(result);
-    assert.equal(result.route.skill, "ralph");
-    assert.equal(result.rest, "");
-  });
-
-  it("trims whitespace", () => {
-    const result = detectKeyword("  $ralph  fix tests  ");
-    assert.ok(result);
-    assert.equal(result.route.skill, "ralph");
-    assert.equal(result.rest, "fix tests");
-  });
-
-  it("does not match keyword in middle of text", () => {
-    assert.equal(detectKeyword("please run $ralph"), null);
-  });
-});
+import { classifyTaskSize } from "../lib/keyword-engine.js";
 
 describe("classifyTaskSize", () => {
   it("classifies short input as small", () => {
@@ -91,24 +31,5 @@ describe("classifyTaskSize", () => {
   it("classifies medium-length text as medium by word count", () => {
     const medText = Array(81).fill("word").join(" ");
     assert.equal(classifyTaskSize(medText), "medium");
-  });
-});
-
-describe("KEYWORD_ROUTES", () => {
-  it("has 5 keyword routes", () => {
-    assert.equal(KEYWORD_ROUTES.length, 5);
-  });
-
-  it("all keywords start with $", () => {
-    for (const route of KEYWORD_ROUTES) {
-      assert.ok(route.keyword.startsWith("$"), `${route.keyword} should start with $`);
-    }
-  });
-
-  it("priorities are unique and ascending", () => {
-    const priorities = KEYWORD_ROUTES.map((r) => r.priority);
-    const sorted = [...priorities].sort((a, b) => a - b);
-    assert.deepEqual(priorities, sorted);
-    assert.equal(new Set(priorities).size, priorities.length);
   });
 });
