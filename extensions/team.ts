@@ -26,11 +26,12 @@ export default function (pi: ExtensionAPI) {
     promptSnippet: "Manage oh-my-pi team sessions for parallel multi-agent execution",
     promptGuidelines: [
       "When using team_manage, dispatch actual work to subagents via superpowers_dispatch. The team_manage tool tracks state; superpowers_dispatch does the work.",
-      "For parallel execution, use superpowers_dispatch with a tasks array: superpowers_dispatch({ tasks: [{ agent: 'implementer', task: '...' }, { agent: 'implementer', task: '...' }] }). Each task runs as an isolated subagent in parallel.",
-      "For sequential execution with handoffs, use superpowers_dispatch with a chain array: superpowers_dispatch({ chain: [{ agent: 'implementer', task: '...' }, { agent: 'code-reviewer', task: 'Review: {previous}' }] }). The {previous} placeholder passes the prior agent's output.",
-      "Available agent roles: implementer (writes code + tests + commits), worker (general purpose), scout (fast recon, may fail if model unavailable — use worker instead), code-reviewer (reviews code quality), spec-reviewer (checks spec compliance).",
-      "CRITICAL: Never dispatch parallel implementers that modify the same files. Split work by file/module boundaries.",
-      "Team workflow: 1) Create team with team_manage. 2) Add tasks with team_manage. 3) Dispatch independent tasks in parallel via superpowers_dispatch tasks array. 4) Update task status via team_manage as results come back. 5) Transition team phase as work progresses.",
+      "For parallel execution, use subagent with a tasks array: subagent({ tasks: [{ agent: 'worker', task: '...' }, { agent: 'worker', task: '...' }] }). Each task runs as an isolated subagent in parallel.",
+      "For sequential execution with handoffs, use subagent with a chain array: subagent({ chain: [{ agent: 'implementer', task: '...' }, { agent: 'code-reviewer', task: 'Review: {previous}' }] }). The {previous} placeholder passes the prior agent's output.",
+      "Available agent roles: implementer (writes code + tests + commits), worker (general purpose, does NOT auto-commit), code-reviewer (reviews code quality), spec-reviewer (checks spec compliance).",
+      "CRITICAL: Never dispatch parallel 'implementer' agents in the same git repo — they fight over git locks and one will fail silently. Use 'worker' for parallel file creation, then commit once after all workers complete.",
+      "CRITICAL: Always add 'Do NOT run git commands' to parallel worker task descriptions to prevent git lock conflicts.",
+      "Team workflow: 1) Create team with team_manage. 2) Add tasks with team_manage. 3) Dispatch independent tasks in parallel via subagent tasks array using 'worker' agents. 4) Update task status via team_manage as results come back. 5) Commit all changes once after workers finish. 6) Transition team phase as work progresses.",
     ],
     parameters: Type.Object({
       action: Type.Union([
