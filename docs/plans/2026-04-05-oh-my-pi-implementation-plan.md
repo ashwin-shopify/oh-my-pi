@@ -17,20 +17,20 @@ Organized into 5 slices, each independently shippable and testable.
 
 ### Tasks
 
-- [ ] **1.1 — Package scaffold**
+- [x] **1.1 — Package scaffold**
   - `package.json` with `pi` manifest (extensions, skills dirs), `pi-package` keyword
   - `tsconfig.json` targeting ESM, NodeNext
   - `extensions/` and `skills/` directories
   - Basic README.md
 
-- [ ] **1.2 — Hooks extension (`extensions/hooks.ts`)**
+- [x] **1.2 — Hooks extension (`extensions/hooks.ts`)**
   - Listen to `input` event via `pi.on("input", ...)`
   - Keyword registry: `$ralph`, `$ralplan`, `$interview`, `$explore`, `$team`
   - On keyword match: `return { action: "transform", text: <expanded skill invocation> }`
   - Task-size classifier: count lines/files/changes mentioned → suggest team mode for large tasks
   - Register `/omx` command as alias overview
 
-- [ ] **1.3 — Verify local install**
+- [x] **1.3 — Verify local install**
   - `pi install /Users/ashwin/Code/oh-my-pi` works
   - Keywords detected and transformed in live session
   - No conflicts with existing skills
@@ -60,23 +60,23 @@ oh-my-pi/
 
 ### Tasks
 
-- [ ] **2.1 — Ralph skill (`skills/ralph/SKILL.md`)**
+- [x] **2.1 — Ralph skill (`skills/ralph/SKILL.md`)**
   - Phase state machine: starting → executing → verifying → fixing → complete/failed/cancelled
   - Instruction flow: receive task → dispatch implementer → dispatch verifier → if fail: dispatch fixer → re-verify → loop
   - Max iterations (default 50) with configurable limit
   - Progress tracking via `.oh-my-pi/ralph/` in project dir
 
-- [ ] **2.2 — Ralph state contract (`skills/ralph/state-contract.md`)**
+- [ ] **2.2 — Ralph state contract (`skills/ralph/state-contract.md`)** (embedded in SKILL.md)
   - Phase normalization (legacy aliases: start→starting, verify→verifying, etc.)
   - Validation rules: terminal phases require active=false, iteration ≥ 0, max_iterations > 0
   - State schema for `.oh-my-pi/ralph/state.json`
 
-- [ ] **2.3 — Ralph progress ledger (`skills/ralph/progress-ledger.md`)**
+- [ ] **2.3 — Ralph progress ledger (`skills/ralph/progress-ledger.md`)** (embedded in SKILL.md)
   - JSON ledger at `.oh-my-pi/ralph/progress.json`
   - Each iteration: { phase, verdict, summary, timestamp, artifacts }
   - Visual feedback entries (score, differences, suggestions) for UI work
 
-- [ ] **2.4 — Register `/ralph` command in hooks extension**
+- [x] **2.4 — Register `/ralph` command in hooks extension**
   - `/ralph [task]` → loads ralph skill with task argument
   - `/ralph status` → reads and displays current ralph state
   - `/ralph cancel` → sets phase to cancelled, active=false
@@ -103,7 +103,7 @@ skills/ralph/
 
 ### Tasks
 
-- [ ] **3.1 — Ralplan skill (`skills/ralplan/SKILL.md`)**
+- [x] **3.1 — Ralplan skill (`skills/ralplan/SKILL.md`)**
   - Phase machine: draft → architect-review → critic-review → complete/failed/cancelled
   - Draft: dispatch worker subagent to produce implementation plan
   - Architect review: dispatch reviewer to assess feasibility, architecture, risks
@@ -122,7 +122,7 @@ skills/ralph/
   - Ralph reads plan artifact path from ralplan output
   - Seamless `$ralplan` → `$ralph` workflow
 
-- [ ] **3.4 — Register `/ralplan` command**
+- [x] **3.4 — Register `/ralplan` command**
   - `/ralplan [task]` → loads ralplan skill
   - `/ralplan status` → shows current planning phase and review verdicts
 
@@ -147,20 +147,20 @@ skills/ralplan/
 
 ### Tasks
 
-- [ ] **4.1 — Deep Interview skill (`skills/deep-interview/SKILL.md`)**
+- [x] **4.1 — Deep Interview skill (`skills/deep-interview/SKILL.md`)**
   - Structured clarification before implementation
   - Enforces completion: must answer all scoping questions before handoff
   - Produces a clarified scope document
   - Hands off to ralplan when complete
 
-- [ ] **4.2 — Explore skill (`skills/explore/SKILL.md`)**
+- [x] **4.2 — Explore skill (`skills/explore/SKILL.md`)**
   - Read-only reconnaissance mode
   - Dispatches scout subagent (use worker role since scout model unavailable)
   - Can read files, run grep/find/ls, analyze structure
   - Cannot modify files, run tests, or execute side effects
   - Outputs structured summary: project structure, patterns found, relevant files
 
-- [ ] **4.3 — Sparkshell skill (`skills/sparkshell/SKILL.md`)**
+- [x] **4.3 — Sparkshell skill (`skills/sparkshell/SKILL.md`)**
   - Language-aware bounded shell commands
   - Registry of safe commands per language:
     - Ruby: `bundle exec ruby -c`, `rubocop --lint`, `rails routes`
@@ -170,7 +170,7 @@ skills/ralplan/
     - Git: `git log`, `git diff`, `git blame`
   - Blocks dangerous commands (rm, mv to important dirs, force push, etc.)
 
-- [ ] **4.4 — Register commands**
+- [x] **4.4 — Register commands**
   - `/interview [topic]` → deep interview skill
   - `/explore [prompt]` → explore skill
   - `/sparkshell [command]` → sparkshell skill
