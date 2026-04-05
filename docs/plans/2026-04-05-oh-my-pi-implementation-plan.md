@@ -66,12 +66,12 @@ oh-my-pi/
   - Max iterations (default 50) with configurable limit
   - Progress tracking via `.oh-my-pi/ralph/` in project dir
 
-- [ ] **2.2 — Ralph state contract (`skills/ralph/state-contract.md`)** (embedded in SKILL.md)
+- [x] **2.2 — Ralph state contract (`skills/ralph/state-contract.md`)** (embedded in SKILL.md)
   - Phase normalization (legacy aliases: start→starting, verify→verifying, etc.)
   - Validation rules: terminal phases require active=false, iteration ≥ 0, max_iterations > 0
   - State schema for `.oh-my-pi/ralph/state.json`
 
-- [ ] **2.3 — Ralph progress ledger (`skills/ralph/progress-ledger.md`)** (embedded in SKILL.md)
+- [x] **2.3 — Ralph progress ledger (`skills/ralph/progress-ledger.md`)** (embedded in SKILL.md)
   - JSON ledger at `.oh-my-pi/ralph/progress.json`
   - Each iteration: { phase, verdict, summary, timestamp, artifacts }
   - Visual feedback entries (score, differences, suggestions) for UI work
@@ -112,12 +112,12 @@ skills/ralph/
   - If either reviewer says "iterate": redraft incorporating feedback, re-review
   - Max iterations (default 5)
 
-- [ ] **3.2 — Ralplan artifacts**
+- [x] **3.2 — Ralplan artifacts**
   - Plans stored in `.oh-my-pi/plans/plan-<slug>.md`
   - Review history: `.oh-my-pi/plans/reviews.json`
   - Each iteration captures: { draft_summary, architect_verdict, critic_verdict, feedback }
 
-- [ ] **3.3 — Ralplan → Ralph handoff**
+- [x] **3.3 — Ralplan → Ralph handoff**
   - When ralplan completes with approved plan, offer to start ralph execution
   - Ralph reads plan artifact path from ralplan output
   - Seamless `$ralplan` → `$ralph` workflow
@@ -195,7 +195,7 @@ skills/sparkshell/SKILL.md
 
 ### Tasks
 
-- [ ] **5.1 — Team extension (`extensions/team.ts`)**
+- [x] **5.1 — Team extension (`extensions/team.ts`)**
   - Register `team_manage` tool for LLM-driven team operations
   - Operations: create team, assign tasks, check status, resume, shutdown
   - State machine: plan → prd → exec → verify → fix → complete
@@ -203,13 +203,13 @@ skills/sparkshell/SKILL.md
   - Workers dispatched via superpowers_dispatch
   - Worktree isolation via git worktree (optional, for large teams)
 
-- [ ] **5.2 — Team commands**
+- [x] **5.2 — Team commands**
   - `/team start [description]` — create new team session
   - `/team status` — show active teams and their task states
   - `/team resume [team-name]` — resume a paused team
   - `/team shutdown [team-name]` — gracefully stop a team
 
-- [ ] **5.3 — HUD extension (`extensions/hud.ts`)**
+- [x] **5.3 — HUD extension (`extensions/hud.ts`)**
   - `ctx.ui.custom()` TUI component showing:
     - Active team sessions with phase
     - Task list with status (pending/running/done/failed)
@@ -218,7 +218,7 @@ skills/sparkshell/SKILL.md
   - Updates on `tool_result` events
   - Toggle via `/hud` command
 
-- [ ] **5.4 — Session state extension (`extensions/state.ts`)**
+- [x] **5.4 — Session state extension (`extensions/state.ts`)**
   - `pi.on("session_start")` → restore active ralph/team state from `.oh-my-pi/`
   - `pi.on("session_shutdown")` → persist current state
   - `pi.appendEntry()` for cross-session state survival
@@ -267,9 +267,9 @@ Slice 5 depends on everything (orchestrates all skills).
 
 ## Success Criteria
 
-- [ ] `pi install ~/Code/oh-my-pi` works cleanly
-- [ ] `$keyword` detection routes to correct skills
-- [ ] Ralph completion loop works end-to-end (execute → verify → fix → pass)
-- [ ] Ralplan consensus works (draft → review → iterate → approve)
-- [ ] `/team` creates and manages durable multi-agent sessions
-- [ ] State persists across pi sessions
+- [x] `pi install ~/Code/oh-my-pi` works cleanly
+- [x] `$keyword` detection routes to correct skills
+- [x] Ralph completion loop works end-to-end (execute → verify → fix → pass)
+- [x] Ralplan consensus works (draft → review → iterate → approve)
+- [x] `/team` creates and manages durable multi-agent sessions
+- [x] State persists across pi sessions
