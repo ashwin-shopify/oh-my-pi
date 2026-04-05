@@ -75,75 +75,19 @@ export default function (pi: ExtensionAPI) {
     description: "Show oh-my-pi keyword shortcuts and status",
     handler: async (_args, ctx) => {
       const lines = [
-        "oh-my-pi keywords:",
+        "oh-my-pi — keyword shortcuts:",
         "",
-        ...KEYWORD_ROUTES.map((r) => `  ${r.keyword.padEnd(14)} → ${r.description}`),
+        ...KEYWORD_ROUTES.map((r) => `  ${r.keyword.padEnd(14)} → /skill:${r.skill}`),
         "",
-        "Commands:",
-        "  /ralph [task]       Start persistent completion loop",
-        "  /ralplan [task]     Start consensus planning workflow",
-        "  /interview [topic]  Start structured clarification",
-        "  /explore [prompt]   Read-only reconnaissance",
-        "  /sparkshell [cmd]   Bounded shell command",
-        "  /team [action]      Manage multi-agent teams",
-        "  /hud               Toggle HUD dashboard",
+        "Or invoke skills directly:",
+        "  /skill:ralph [task]          Persistent completion loop",
+        "  /skill:ralplan [task]        Consensus planning workflow",
+        "  /skill:deep-interview [topic] Structured clarification",
+        "  /skill:explore [prompt]      Read-only reconnaissance",
+        "  /skill:sparkshell [cmd]      Bounded shell commands",
       ];
       ctx.ui.notify(lines.join("\n"), "info");
     },
   });
 
-  pi.registerCommand("ralph", {
-    description: "Start a ralph persistent completion loop",
-    handler: async (args, ctx) => {
-      if (!args || args.trim() === "") {
-        ctx.ui.notify("Usage: /ralph <task description>", "warn");
-        return;
-      }
-      pi.sendUserMessage(`/skill:ralph ${args}`, { deliverAs: "followUp" });
-    },
-  });
-
-  pi.registerCommand("ralplan", {
-    description: "Start consensus planning workflow",
-    handler: async (args, ctx) => {
-      if (!args || args.trim() === "") {
-        ctx.ui.notify("Usage: /ralplan <task description>", "warn");
-        return;
-      }
-      pi.sendUserMessage(`/skill:ralplan ${args}`, { deliverAs: "followUp" });
-    },
-  });
-
-  pi.registerCommand("interview", {
-    description: "Start structured clarification",
-    handler: async (args, ctx) => {
-      if (!args || args.trim() === "") {
-        ctx.ui.notify("Usage: /interview <topic>", "warn");
-        return;
-      }
-      pi.sendUserMessage(`/skill:deep-interview ${args}`, { deliverAs: "followUp" });
-    },
-  });
-
-  pi.registerCommand("explore", {
-    description: "Read-only reconnaissance mode",
-    handler: async (args, ctx) => {
-      if (!args || args.trim() === "") {
-        ctx.ui.notify("Usage: /explore <prompt>", "warn");
-        return;
-      }
-      pi.sendUserMessage(`/skill:explore ${args}`, { deliverAs: "followUp" });
-    },
-  });
-
-  pi.registerCommand("sparkshell", {
-    description: "Language-aware bounded shell command",
-    handler: async (args, ctx) => {
-      if (!args || args.trim() === "") {
-        ctx.ui.notify("Usage: /sparkshell <command>", "warn");
-        return;
-      }
-      pi.sendUserMessage(`/skill:sparkshell ${args}`, { deliverAs: "followUp" });
-    },
-  });
 }
