@@ -1,5 +1,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { withFileMutationQueue } from "@mariozechner/pi-coding-agent";
 import { Type } from "@sinclair/typebox";
+import { join } from "node:path";
 import {
   createTeamState,
   loadTeamState,
@@ -7,9 +9,14 @@ import {
   listTeams,
   formatTeamStatus,
   transitionPhase,
+  teamStateDir,
   type TeamState,
   type TeamTask,
 } from "../lib/team-state.js";
+
+function teamFilePath(cwd: string, name: string): string {
+  return join(teamStateDir(cwd), `${name}.json`);
+}
 
 export default function (pi: ExtensionAPI) {
   pi.registerTool({
@@ -51,12 +58,15 @@ export default function (pi: ExtensionAPI) {
         case "create": {
           const name = params.team_name || `team-${Date.now()}`;
           const desc = params.description || "unnamed task";
-          const state = createTeamState(name, desc);
-          await saveTeamState(cwd, state);
-          return {
-            content: [{ type: "text" as const, text: `Team "${name}" created.\n\n${formatTeamStatus(state)}` }],
-            details: { team: state },
-          };
+          const filePath = teamFilePath(cwd, name);
+          return withFileMutationQueue(filePath, async () => {
+            const state = createTeamState(name, desc);
+            await saveTeamState(cwd, state);
+            return {
+              content: [{ type: "text" as const, text: `Team "${name}" created.\n\n${formatTeamStatus(state)}` }],
+              details: { team: state },
+            };
+          });
         }
 
         case "list": {
@@ -85,18 +95,21 @@ export default function (pi: ExtensionAPI) {
           if (!name || !params.task_id || !params.task_description) {
             return { content: [{ type: "text" as const, text: "Error: team_name, task_id, and task_description required" }], details: {} };
           }
-          const state = await loadTeamState(cwd, name);
-          if (!state) return { content: [{ type: "text" as const, text: `Team "${name}" not found.` }], details: {} };
+          const filePath = teamFilePath(cwd, name);
+          return withFileMutationQueue(filePath, async () => {
+            const state = await loadTeamState(cwd, name);
+            if (!state) return { content: [{ type: "text" as const, text: `Team "${name}" not found.` }], details: {} };
 
-          const task: TeamTask = {
-            id: params.task_id,
-            description: params.task_description,
-            status: "pending",
-          };
-          state.tasks.push(task);
-          state.updated_at = new Date().toISOString();
-          await saveTeamState(cwd, state);
-          return { content: [{ type: "text" as const, text: `Task "${params.task_id}" added to team "${name}".` }], details: { task } };
+            const task: TeamTask = {
+              id: params.task_id!,
+              description: params.task_description!,
+              status: "pending",
+            };
+            state.tasks.push(task);
+            state.updated_at = new Date().toISOString();
+            await saveTeamState(cwd, state);
+            return { content: [{ type: "text" as const, text: `Task "${params.task_id}" added to team "${name}".` }], details: { task } };
+          });
         }
 
         case "update_task": {
@@ -104,23 +117,26 @@ export default function (pi: ExtensionAPI) {
           if (!name || !params.task_id) {
             return { content: [{ type: "text" as const, text: "Error: team_name and task_id required" }], details: {} };
           }
-          const state = await loadTeamState(cwd, name);
-          if (!state) return { content: [{ type: "text" as const, text: `Team "${name}" not found.` }], details: {} };
+          const filePath = teamFilePath(cwd, name);
+          return withFileMutationQueue(filePath, async () => {
+            const state = await loadTeamState(cwd, name);
+            if (!state) return { content: [{ type: "text" as const, text: `Team "${name}" not found.` }], details: {} };
 
-          const task = state.tasks.find((t) => t.id === params.task_id);
-          if (!task) return { content: [{ type: "text" as const, text: `Task "${params.task_id}" not found.` }], details: {} };
+            const task = state.tasks.find((t) => t.id === params.task_id);
+            if (!task) return { content: [{ type: "text" as const, text: `Task "${params.task_id}" not found.` }], details: {} };
 
-          const now = new Date().toISOString();
-          if (params.task_status) {
-            task.status = params.task_status as TeamTask["status"];
-            if (task.status === "running" && !task.started_at) task.started_at = now;
-            if (task.status === "done" || task.status === "failed") task.completed_at = now;
-          }
-          if (params.task_result) task.result = params.task_result;
+            const now = new Date().toISOString();
+            if (params.task_status) {
+              task.status = params.task_status as TeamTask["status"];
+              if (task.status === "running" && !task.started_at) task.started_at = now;
+              if (task.status === "done" || task.status === "failed") task.completed_at = now;
+            }
+            if (params.task_result) task.result = params.task_result;
 
-          state.updated_at = now;
-          await saveTeamState(cwd, state);
-          return { content: [{ type: "text" as const, text: `Task "${params.task_id}" updated: ${task.status}` }], details: { task } };
+            state.updated_at = now;
+            await saveTeamState(cwd, state);
+            return { content: [{ type: "text" as const, text: `Task "${params.task_id}" updated: ${task.status}` }], details: { task } };
+          });
         }
 
         case "transition": {
@@ -128,35 +144,40 @@ export default function (pi: ExtensionAPI) {
           if (!name || !params.phase) {
             return { content: [{ type: "text" as const, text: "Error: team_name and phase required" }], details: {} };
           }
-          const state = await loadTeamState(cwd, name);
-          if (!state) return { content: [{ type: "text" as const, text: `Team "${name}" not found.` }], details: {} };
+          const filePath = teamFilePath(cwd, name);
+          return withFileMutationQueue(filePath, async () => {
+            const state = await loadTeamState(cwd, name);
+            if (!state) return { content: [{ type: "text" as const, text: `Team "${name}" not found.` }], details: {} };
 
-          try {
-            const updated = transitionPhase(state, params.phase as any, params.reason);
-            await saveTeamState(cwd, updated);
-            return { content: [{ type: "text" as const, text: `Team "${name}" transitioned: ${state.phase} → ${params.phase}\n\n${formatTeamStatus(updated)}` }], details: { team: updated } };
-          } catch (e: any) {
-            return { content: [{ type: "text" as const, text: `Transition error: ${e.message}` }], details: {} };
-          }
+            try {
+              const updated = transitionPhase(state, params.phase as any, params.reason);
+              await saveTeamState(cwd, updated);
+              return { content: [{ type: "text" as const, text: `Team "${name}" transitioned: ${state.phase} → ${params.phase}\n\n${formatTeamStatus(updated)}` }], details: { team: updated } };
+            } catch (e: any) {
+              return { content: [{ type: "text" as const, text: `Transition error: ${e.message}` }], details: {} };
+            }
+          });
         }
 
         case "shutdown": {
           const name = params.team_name;
           if (!name) return { content: [{ type: "text" as const, text: "Error: team_name required" }], details: {} };
-          const state = await loadTeamState(cwd, name);
-          if (!state) return { content: [{ type: "text" as const, text: `Team "${name}" not found.` }], details: {} };
+          const filePath = teamFilePath(cwd, name);
+          return withFileMutationQueue(filePath, async () => {
+            const state = await loadTeamState(cwd, name);
+            if (!state) return { content: [{ type: "text" as const, text: `Team "${name}" not found.` }], details: {} };
 
-          try {
-            const updated = transitionPhase(state, "cancelled", params.reason || "user shutdown");
-            await saveTeamState(cwd, updated);
-            return { content: [{ type: "text" as const, text: `Team "${name}" shut down.` }], details: { team: updated } };
-          } catch (e: any) {
-            // Already in terminal state
-            state.active = false;
-            state.updated_at = new Date().toISOString();
-            await saveTeamState(cwd, state);
-            return { content: [{ type: "text" as const, text: `Team "${name}" marked inactive.` }], details: { team: state } };
-          }
+            try {
+              const updated = transitionPhase(state, "cancelled", params.reason || "user shutdown");
+              await saveTeamState(cwd, updated);
+              return { content: [{ type: "text" as const, text: `Team "${name}" shut down.` }], details: { team: updated } };
+            } catch (e: any) {
+              state.active = false;
+              state.updated_at = new Date().toISOString();
+              await saveTeamState(cwd, state);
+              return { content: [{ type: "text" as const, text: `Team "${name}" marked inactive.` }], details: { team: state } };
+            }
+          });
         }
 
         default:
