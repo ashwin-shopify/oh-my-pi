@@ -4,6 +4,9 @@
   "description": "OMX-inspired workflow orchestration for pi — hooks, teams, HUD, ralph, ralplan, and more",
   "keywords": ["pi-package", "pi", "omx", "workflow", "orchestration", "multi-agent"],
   "license": "MIT",
+  "scripts": {
+    "test": "pnpx tsx --test tests/*.test.ts"
+  },
   "pi": {
     "extensions": ["./extensions"],
     "skills": ["./skills"]
