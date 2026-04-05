@@ -7,9 +7,7 @@ Inspired by [oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex) (16k+ star
 ## Install
 
 ```bash
-pi install /path/to/oh-my-pi
-# or when published:
-# pi install npm:oh-my-pi
+pi install https://github.com/ashwin-shopify/oh-my-pi
 ```
 
 ## Skills
