@@ -1,0 +1,11 @@
+{
+  "name": "oh-my-pi",
+  "version": "0.1.0",
+  "description": "OMX-inspired workflow orchestration for pi — hooks, teams, HUD, ralph, ralplan, and more",
+  "keywords": ["pi-package", "pi", "omx", "workflow", "orchestration", "multi-agent"],
+  "license": "MIT",
+  "pi": {
+    "extensions": ["./extensions"],
+    "skills": ["./skills"]
+  }
+}
