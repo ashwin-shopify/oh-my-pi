@@ -12,6 +12,15 @@ description: >
 
 Ralph is an execution engine that keeps pushing toward completion through a structured verify/fix cycle. Unlike single-pass implementation, Ralph verifies its own work and fixes issues iteratively.
 
+## Input Contract
+
+Ralph is grounded in an approved plan and the deep-interview brief that produced it. The caller must supply both so verification has a source of truth, not just a task string.
+
+- Accept the approved plan path plus deep-interview spec/state paths
+- Treat acceptance criteria and non-goals as verification targets, not background context
+- Implementer subagent reads the source brief before editing
+- After adopting a brief, append `ralph` to `consumed_by` in the machine-readable state
+
 ## Phase State Machine
 
 ```
@@ -56,7 +65,14 @@ Progress ledger at `.oh-my-pi/ralph/progress.json`:
       "phase": "verifying",
       "verdict": "fail",
       "summary": "3 tests still failing: test_login, test_logout, test_session_expiry",
-      "timestamp": "2026-04-05T10:05:00Z"
+      "timestamp": "2026-04-05T10:05:00Z",
+      "acceptance_criteria_status": {
+        "criteria-a": "pass",
+        "criteria-b": "unknown"
+      },
+      "boundary_violations": [],
+      "source_brief_spec": ".oh-my-pi/specs/deep-interview-<slug>.md",
+      "source_plan": ".oh-my-pi/plans/plan-<slug>.md"
     }
   ]
 }
@@ -70,6 +86,8 @@ When the user invokes `/ralph <task>` or `$ralph <task>`:
 - Create `.oh-my-pi/ralph/` directory
 - Write initial state: `{ active: true, current_phase: "starting", iteration: 0 }`
 - Parse task description
+- Accept the approved plan path plus deep-interview spec/state paths
+- Append `ralph` to `consumed_by` in the machine-readable state after adopting the brief
 
 ### 2. Execute Loop
 
@@ -91,6 +109,15 @@ for iteration in 1..max_iterations:
   - Run the full test suite relevant to the changes
   - Check that all acceptance criteria are met
   - Report verdict: "pass" or "fail" with details
+
+  Semantic verification requirements:
+  - Verifier checks code and tests against:
+    - acceptance criteria
+    - constraints
+    - non-goals
+    - decision boundaries
+  - Crossing a non-goal or boundary should count as a failure, even if tests pass
+  - Non-goal and boundary checks are best-effort semantic verification, so the verifier prompt must explicitly answer `YES` or `NO` for violations and include evidence
   
   if verdict == "pass":
     phase = "complete"
@@ -145,7 +172,7 @@ superpowers_dispatch(
 # Verify phase  
 superpowers_dispatch(
   agent: "worker", 
-  task: "Verify the implementation. Run tests, check requirements. Report verdict: pass or fail with details."
+  task: "Verify the implementation. Run tests, check requirements against <source_brief_spec> and <source_plan>. Report verdict: pass or fail with details. Answer YES or NO for non-goal or decision-boundary violations and include evidence."
 )
 
 # Fix phase

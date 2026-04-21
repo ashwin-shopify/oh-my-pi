@@ -13,6 +13,9 @@ describe("ralph skill contract", () => {
       "non-goals",
       "decision boundaries",
       "YES` or `NO`",
+      "acceptance_criteria_status",
+      "source_brief_spec",
+      "source_plan",
     ]);
   });
 });
