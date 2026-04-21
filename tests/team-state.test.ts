@@ -30,6 +30,17 @@ describe("createTeamState", () => {
     const state = createTeamState("t", "d", 5);
     assert.equal(state.max_fix_attempts, 5);
   });
+
+  it("stores source brief references when present", () => {
+    const state = createTeamState("brief-team", "follow the brief", 3, {
+      source_brief_spec: ".oh-my-pi/specs/deep-interview-brief-team.md",
+      source_brief_state: ".oh-my-pi/state/deep-interview-brief-team.json",
+      source_plan: ".oh-my-pi/plans/plan-brief-team.md",
+    });
+    assert.equal(state.source_brief_spec, ".oh-my-pi/specs/deep-interview-brief-team.md");
+    assert.equal(state.source_brief_state, ".oh-my-pi/state/deep-interview-brief-team.json");
+    assert.equal(state.source_plan, ".oh-my-pi/plans/plan-brief-team.md");
+  });
 });
 
 describe("transitionPhase", () => {
