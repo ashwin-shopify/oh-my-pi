@@ -19,6 +19,7 @@ Ralph is grounded in an approved plan and the deep-interview brief that produced
 - Accept the approved plan path plus deep-interview spec/state paths
 - Treat acceptance criteria and non-goals as verification targets, not background context
 - Implementer subagent reads the source brief before editing
+- If the brief is missing, surface reduced-fidelity execution explicitly instead of pretending verification still has a full source of truth
 - After adopting a brief, append `ralph` to `consumed_by` in the machine-readable state
 
 ## Phase State Machine
@@ -88,6 +89,7 @@ When the user invokes `/ralph <task>` or `$ralph <task>`:
 - Parse task description
 - Accept the approved plan path plus deep-interview spec/state paths
 - Append `ralph` to `consumed_by` in the machine-readable state after adopting the brief
+- If no brief is available, say that Ralph is running in reduced-fidelity mode before dispatching implementer and verifier subagents
 
 ### 2. Execute Loop
 

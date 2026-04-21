@@ -4,7 +4,7 @@ import { assertIncludesAll, readRepoText } from "./skill-contract-helpers.js";
 const extensionTextPromise = readRepoText("extensions/team.ts");
 
 describe("team extension contract", () => {
-  it("exposes source brief fields and appends team to consumed_by", async () => {
+  it("exposes source brief fields and instructs agents to append team to consumed_by", async () => {
     const text = await extensionTextPromise;
     assertIncludesAll(text, [
       "source_brief_spec",

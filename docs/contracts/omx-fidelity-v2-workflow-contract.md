@@ -107,7 +107,8 @@ The machine-readable artifact must include at least:
       "id": "oq-1",
       "text": "Whether team mode should summarize criteria per lane or only at team level",
       "dimension": "scope",
-      "severity": "medium"
+      "severity": "medium",
+      "resolution": "Defer to future iteration; V2 only requires team-level source-of-truth propagation."
     }
   ],
   "residual_risk": [

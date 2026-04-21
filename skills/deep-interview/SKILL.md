@@ -63,6 +63,7 @@ Recommended clarity dimensions:
 - Decision-boundaries clarity
 
 The machine-readable state must track at least:
+- `version`
 - `profile`
 - `created_at`
 - `updated_at`
