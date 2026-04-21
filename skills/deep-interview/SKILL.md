@@ -1,10 +1,11 @@
 ---
 name: deep-interview
 description: >
-  Structured clarification workflow before implementation.
-  Enforces scoping completion before handoff to planning.
-  Use when: requirements are vague, scope is unclear, multiple interpretations exist,
-  the user says "I'm not sure what I need", or before starting any large feature.
+  OMX-style convergence interview with ambiguity scoring, readiness gates, and
+  explicit handoff artifacts. Use when: requirements are vague, scope is unclear,
+  multiple interpretations exist, the user says "I'm not sure what I need", or
+  before starting any large feature. Produces a canonical spec/state pair that
+  ralplan, ralph, and team consume as binding upstream context.
 ---
 
 # Deep Interview — Convergence Workflow
