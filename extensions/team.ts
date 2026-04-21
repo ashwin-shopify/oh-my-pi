@@ -32,6 +32,7 @@ export default function (pi: ExtensionAPI) {
       "CRITICAL: Never dispatch parallel 'implementer' agents in the same git repo — they fight over git locks and one will fail silently. Use 'worker' for parallel file creation, then commit once after all workers complete.",
       "CRITICAL: Always add 'Do NOT run git commands' to parallel worker task descriptions to prevent git lock conflicts.",
       "Team workflow: 1) Create team with team_manage. 2) Add tasks with team_manage. 3) Dispatch independent tasks in parallel via subagent tasks array using 'worker' agents. 4) Update task status via team_manage as results come back. 5) Commit all changes once after workers finish. 6) Transition team phase as work progresses.",
+      "After adopting a brief, append `team` to `consumed_by` in the machine-readable state before dispatching workers.",
     ],
     parameters: Type.Object({
       action: Type.Union([
@@ -51,6 +52,9 @@ export default function (pi: ExtensionAPI) {
       task_result: Type.Optional(Type.String({ description: "Task result (for update_task)" })),
       phase: Type.Optional(Type.String({ description: "Target phase (for transition)" })),
       reason: Type.Optional(Type.String({ description: "Transition reason (for transition)" })),
+      source_brief_spec: Type.Optional(Type.String({ description: "Source brief spec path" })),
+      source_brief_state: Type.Optional(Type.String({ description: "Source brief state path" })),
+      source_plan: Type.Optional(Type.String({ description: "Source plan path" })),
     }),
     async execute(_toolCallId, params, _signal, _onUpdate, ctx) {
       const cwd = ctx.cwd;
@@ -61,7 +65,11 @@ export default function (pi: ExtensionAPI) {
           const desc = params.description || "unnamed task";
           const filePath = teamFilePath(cwd, name);
           return withFileMutationQueue(filePath, async () => {
-            const state = createTeamState(name, desc);
+            const state = createTeamState(name, desc, 3, {
+              source_brief_spec: params.source_brief_spec,
+              source_brief_state: params.source_brief_state,
+              source_plan: params.source_plan,
+            });
             await saveTeamState(cwd, state);
             return {
               content: [{ type: "text" as const, text: `Team "${name}" created.\n\n${formatTeamStatus(state)}` }],
