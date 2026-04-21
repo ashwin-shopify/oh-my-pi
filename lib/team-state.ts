@@ -37,10 +37,10 @@ export interface TeamState {
 const TERMINAL_PHASES = new Set<string>(["complete", "failed", "cancelled"]);
 
 const TRANSITIONS: Record<TeamPhase, AnyPhase[]> = {
-  planning: ["executing"],
-  executing: ["verifying"],
-  verifying: ["fixing", "complete", "failed"],
-  fixing: ["executing", "verifying", "complete", "failed"],
+  planning: ["executing", "cancelled"],
+  executing: ["verifying", "cancelled"],
+  verifying: ["fixing", "complete", "failed", "cancelled"],
+  fixing: ["executing", "verifying", "complete", "failed", "cancelled"],
 };
 
 export function isTerminalPhase(phase: AnyPhase): phase is TerminalPhase {

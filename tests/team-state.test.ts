@@ -95,6 +95,41 @@ describe("transitionPhase", () => {
     assert.throws(() => transitionPhase(state, "executing"), /terminal phase/);
   });
 
+  it("cancels from planning phase", () => {
+    const state = createTeamState("t", "d");
+    const next = transitionPhase(state, "cancelled", "user shutdown");
+    assert.equal(next.phase, "cancelled");
+    assert.equal(next.active, false);
+    assert.ok(next.completed_at);
+    assert.equal(next.phase_transitions.at(-1)?.reason, "user shutdown");
+  });
+
+  it("cancels from verifying phase", () => {
+    let state = createTeamState("t", "d");
+    state = transitionPhase(state, "executing");
+    state = transitionPhase(state, "verifying");
+    const next = transitionPhase(state, "cancelled", "aborting");
+    assert.equal(next.phase, "cancelled");
+    assert.equal(next.active, false);
+    assert.ok(next.completed_at);
+  });
+
+  it("cancels from executing and fixing phases", () => {
+    let executing = createTeamState("t", "d");
+    executing = transitionPhase(executing, "executing");
+    const cancelledFromExecuting = transitionPhase(executing, "cancelled");
+    assert.equal(cancelledFromExecuting.phase, "cancelled");
+    assert.equal(cancelledFromExecuting.active, false);
+
+    let fixing = createTeamState("t", "d");
+    fixing = transitionPhase(fixing, "executing");
+    fixing = transitionPhase(fixing, "verifying");
+    fixing = transitionPhase(fixing, "fixing");
+    const cancelledFromFixing = transitionPhase(fixing, "cancelled");
+    assert.equal(cancelledFromFixing.phase, "cancelled");
+    assert.equal(cancelledFromFixing.active, false);
+  });
+
   it("records reason in transition", () => {
     const state = createTeamState("t", "d");
     const next = transitionPhase(state, "executing", "tests ready");
@@ -125,6 +160,10 @@ describe("isValidTransition", () => {
   it("allows fixing → executing", () => assert.equal(isValidTransition("fixing", "executing"), true));
   it("rejects planning → complete", () => assert.equal(isValidTransition("planning", "complete"), false));
   it("rejects executing → complete", () => assert.equal(isValidTransition("executing", "complete"), false));
+  it("allows planning → cancelled", () => assert.equal(isValidTransition("planning", "cancelled"), true));
+  it("allows executing → cancelled", () => assert.equal(isValidTransition("executing", "cancelled"), true));
+  it("allows verifying → cancelled", () => assert.equal(isValidTransition("verifying", "cancelled"), true));
+  it("allows fixing → cancelled", () => assert.equal(isValidTransition("fixing", "cancelled"), true));
 });
 
 describe("persistence", () => {
