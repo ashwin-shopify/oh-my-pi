@@ -29,15 +29,18 @@ export interface TeamState {
   max_fix_attempts: number;
   current_fix_attempt: number;
   phase_transitions: Array<{ from: string; to: string; at: string; reason?: string }>;
+  source_brief_spec?: string;
+  source_brief_state?: string;
+  source_plan?: string;
 }
 
 const TERMINAL_PHASES = new Set<string>(["complete", "failed", "cancelled"]);
 
 const TRANSITIONS: Record<TeamPhase, AnyPhase[]> = {
-  planning: ["executing"],
-  executing: ["verifying"],
-  verifying: ["fixing", "complete", "failed"],
-  fixing: ["executing", "verifying", "complete", "failed"],
+  planning: ["executing", "cancelled"],
+  executing: ["verifying", "cancelled"],
+  verifying: ["fixing", "complete", "failed", "cancelled"],
+  fixing: ["executing", "verifying", "complete", "failed", "cancelled"],
 };
 
 export function isTerminalPhase(phase: AnyPhase): phase is TerminalPhase {
@@ -48,7 +51,12 @@ export function isValidTransition(from: TeamPhase, to: AnyPhase): boolean {
   return TRANSITIONS[from]?.includes(to) ?? false;
 }
 
-export function createTeamState(name: string, taskDescription: string, maxFixAttempts = 3): TeamState {
+export function createTeamState(
+  name: string,
+  taskDescription: string,
+  maxFixAttempts = 3,
+  sourceArtifacts: Pick<TeamState, "source_brief_spec" | "source_brief_state" | "source_plan"> = {},
+): TeamState {
   const now = new Date().toISOString();
   return {
     name,
@@ -61,6 +69,7 @@ export function createTeamState(name: string, taskDescription: string, maxFixAtt
     max_fix_attempts: maxFixAttempts,
     current_fix_attempt: 0,
     phase_transitions: [],
+    ...sourceArtifacts,
   };
 }
 

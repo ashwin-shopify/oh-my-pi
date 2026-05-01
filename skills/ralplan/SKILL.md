@@ -12,6 +12,16 @@ description: >
 
 Ralplan produces implementation plans that have been reviewed and approved by two independent reviewers: an architect (feasibility, design) and a critic (gaps, edge cases, risks). Plans iterate until both approve.
 
+## Input Contract
+
+Ralplan is the planning consumer of the `deep-interview` brief. Before drafting, it must adopt the upstream spec/state pair so plans never silently drop inherited context.
+
+- Accept explicit deep-interview spec/state paths
+- If invoked directly without them, discover artifacts using the deterministic discovery rule defined in `deep-interview/SKILL.md` under `### Artifact discovery`, or surface that planning is running without interview fidelity
+- After adopting a brief, append `ralplan` to `consumed_by` in the machine-readable state
+
+The adopted brief supplies the non-goals, decision boundaries, constraints, and acceptance criteria that reviewers will check the plan against.
+
 ## Phase State Machine
 
 ```
@@ -42,6 +52,9 @@ When the user invokes `/ralplan <task>` or `$ralplan <task>`:
 ### 1. Initialize
 - Create `.oh-my-pi/plans/` directory
 - Set phase to `draft`, iteration to 1
+- Accept explicit deep-interview spec/state paths, or discover them using the deterministic discovery rule defined in `deep-interview/SKILL.md` under `### Artifact discovery`
+- Read the adopted brief before drafting, or surface reduced-fidelity planning if no brief is available
+- Append `ralplan` to `consumed_by` in the machine-readable state after adopting the brief
 
 ### 2. Consensus Loop
 
@@ -87,6 +100,10 @@ for iteration in 1..max_iterations (default 5):
     DONE ✅ — Plan approved by consensus
   
   # If either said "iterate", loop back to draft with feedback
+
+if loop exits without consensus:
+  phase = "failed"
+  notify the user that max iterations were exhausted
 ```
 
 ### 3. Handoff to Ralph
@@ -101,10 +118,14 @@ When planning completes:
 
 Plans stored at: `.oh-my-pi/plans/plan-<slug>.md`
 
-Review history at: `.oh-my-pi/plans/reviews.json`
+Review history at: `.oh-my-pi/plans/reviews-<slug>.json`
 ```json
 {
   "task": "Add user authentication",
+  "source_brief_spec": ".oh-my-pi/specs/deep-interview-<slug>.md",
+  "source_brief_state": ".oh-my-pi/state/deep-interview-<slug>.json",
+  "inherited_ambiguity_preserved": true,
+  "boundary_violations": [],
   "iterations": [
     {
       "iteration": 1,
@@ -126,11 +147,18 @@ Review history at: `.oh-my-pi/plans/reviews.json`
 }
 ```
 
+The top-level `source_brief_spec` / `source_brief_state` pin the adopted deep-interview brief. `inherited_ambiguity_preserved` records whether the plan carried forward the brief's ambiguity and decision boundaries, and `boundary_violations` captures reviewer outputs as a string array listing plan elements flagged against inherited non-goals, decision boundaries, or constraints. The slug-scoped `reviews-<slug>.json` path prevents later ralplan runs from overwriting earlier review histories.
+
 ## Subagent Prompts
 
 ### Drafter
 ```
 Create an implementation plan for: <task>
+
+<if brief_available>
+Read the deep-interview brief at <source_brief_spec> before drafting.
+Treat inherited non-goals, decision boundaries, constraints, and acceptance criteria as binding inputs.
+</if>
 
 Cover: architecture, components, data flow, testing strategy, risks, acceptance criteria.
 Follow existing codebase patterns. Be specific about file paths and interfaces.
@@ -146,6 +174,12 @@ Previous feedback to incorporate:
 ```
 Review this implementation plan as a software architect.
 
+<if brief_available>
+Read the deep-interview brief at <source_brief_spec> before reviewing the plan.
+Flag any plan element that contradicts inherited non-goals, decision boundaries, or constraints.
+If you find contradictions, list them so they can populate `boundary_violations`.
+</if>
+
 Assess: feasibility, design quality, separation of concerns, scalability, 
 alignment with existing codebase patterns.
 
@@ -156,6 +190,12 @@ If iterate, provide specific actionable feedback.
 ### Critic Reviewer
 ```
 Review this implementation plan as a critical reviewer.
+
+<if brief_available>
+Read the deep-interview brief at <source_brief_spec> before reviewing the plan.
+Flag any missing acceptance criteria, hidden scope expansion, or unresolved risk that the plan fails to carry forward.
+If you find scope contradictions, list them so they can populate `boundary_violations`.
+</if>
 
 Assess: completeness, edge cases, missing tests, error handling paths,
 security considerations, rollback plan, observability gaps.
