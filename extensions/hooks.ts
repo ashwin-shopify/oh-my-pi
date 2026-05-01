@@ -22,7 +22,7 @@ export default function (pi: ExtensionAPI) {
         "Skills:",
         "  /skill:ralph [task]           Execution loop that verifies against the approved plan plus the inherited brief",
         "  /skill:ralplan [task]         Planning workflow that consumes deep-interview briefs and preserves inherited boundaries",
-        "  /skill:deep-interview [topic] OMX-style convergence interview with profiles, ambiguity gating, and explicit handoff artifacts",
+        "  /skill:deep-interview [topic] OMX-style convergence interview using pi-native Q/A, ambiguity gating, and explicit handoff artifacts",
         "  /skill:explore [prompt]       Read-only reconnaissance mode",
         "  /skill:sparkshell [cmd]       Language-aware bounded shell commands",
         "",

@@ -45,6 +45,16 @@ Downstream modes should prefer explicit artifact paths. If invoked directly with
 
 When a downstream phase adopts a brief, it appends itself to `consumed_by` in the machine-readable state so later discovery can distinguish fresh artifacts from already-consumed ones.
 
+## Interview interaction surface
+
+Deep-interview should use pi-native interaction primitives for each user-facing round.
+
+- When the pi `ask` tool is available, use it for each interview question instead of plain-text questioning.
+- Use single-select (`multi: false`) for mutually exclusive choices; use an open-ended `ask` question when the probe needs a free-form answer.
+- If `ask` is unavailable, fall back to an explicit Q/A prompt in chat.
+- Wait for the user's answer before re-scoring, asking the next question, or writing handoff artifacts; never simulate missing answers.
+- Use the pi `ask` tool for the final handoff choice when available, with `multi: false` and options for `ralplan`, `ralph`, `team`, and `refine further`.
+
 ## Machine-readable state schema
 
 The machine-readable artifact must include at least:

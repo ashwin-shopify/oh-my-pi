@@ -16,7 +16,7 @@ pi install https://github.com/ashwin-shopify/oh-my-pi
 |---------|-------------|
 | `/skill:ralph [task]` | Execution loop that verifies against the approved plan plus the inherited brief |
 | `/skill:ralplan [task]` | Planning workflow that consumes deep-interview briefs and preserves inherited boundaries |
-| `/skill:deep-interview [topic]` | OMX-style convergence interview with profiles, ambiguity gating, and explicit handoff artifacts |
+| `/skill:deep-interview [topic]` | OMX-style convergence interview using pi-native Q/A surfaces, ambiguity gating, and explicit handoff artifacts |
 | `/skill:explore [prompt]` | Read-only reconnaissance mode |
 | `/skill:sparkshell [cmd]` | Language-aware bounded shell commands |
 
@@ -32,7 +32,7 @@ pi install https://github.com/ashwin-shopify/oh-my-pi
 
 The canonical workflow mirrors OMX:
 
-1. `/skill:deep-interview` — clarify scope through OMX-style convergence mechanics and write canonical spec/state artifacts
+1. `/skill:deep-interview` — clarify scope through pi-native Q/A convergence mechanics and write canonical spec/state artifacts
 2. `/skill:ralplan` — turn the clarified brief into an approved plan without dropping inherited boundaries
 3. `/skill:ralph` — execute and verify against the plan plus the inherited brief
 4. `/team` — coordinate parallel work from the same source-of-truth when the work is large
@@ -48,7 +48,7 @@ The canonical workflow mirrors OMX:
 ### Skills
 - **ralph** — execution loop that verifies against the approved plan plus the inherited brief
 - **ralplan** — planning workflow that consumes deep-interview briefs and preserves inherited boundaries
-- **deep-interview** — OMX-style convergence interview with profiles, ambiguity gating, and explicit handoff artifacts
+- **deep-interview** — OMX-style convergence interview with pi-native Q/A, profiles, ambiguity gating, and explicit handoff artifacts
 - **explore** — read-only recon with scout subagent
 - **sparkshell** — language-aware safe shell commands
 

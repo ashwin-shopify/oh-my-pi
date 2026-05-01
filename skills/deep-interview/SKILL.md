@@ -33,6 +33,10 @@ Profile selection order:
 
 2. **Question-selection loop**
    - Ask one question at a time.
+   - When the pi `ask` tool is available, use it for each user-facing interview round instead of plain-text questioning.
+   - Use single-select (`multi: false`) for mutually exclusive choices; use an open-ended `ask` question when the probe needs a free-form answer.
+   - If `ask` is unavailable, fall back to an explicit Q/A prompt in chat.
+   - Wait for the user's answer before re-scoring, asking the next question, or writing handoff artifacts; never simulate missing answers.
    - Re-score clarity dimensions after each answer.
    - Target the weakest unresolved dimension rather than walking a fixed list.
    - Prefer pressure moves: evidence, assumption, boundary, tradeoff, root cause, example.
@@ -144,6 +148,8 @@ Consumers should treat this as the default lane, not a hard prohibition on other
 ## Handoff behavior
 
 After artifact generation, deep-interview presents explicit handoff options, with `ralplan` as the default recommendation for large/complex work. The handoff must pass the spec/state paths, not just the original task text.
+
+Use the pi `ask` tool for the handoff choice when available, with `multi: false` and options for `ralplan`, `ralph`, `team`, and `refine further`. If `ask` is unavailable, present the same choices in chat and wait for the user's selection.
 
 Typical prompt:
 - "Brief captured at `.oh-my-pi/specs/deep-interview-<slug>.md`. Hand off to ralplan, ralph, team, or refine further?"

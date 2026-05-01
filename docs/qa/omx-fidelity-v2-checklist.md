@@ -8,8 +8,8 @@
 - [ ] `pnpx tsx --test tests/*.test.ts`
 
 ## Manual
-- [ ] Run `/skill:deep-interview` on a greenfield prompt and confirm profile, ambiguity, readiness gates, and canonical artifacts are visible
-- [ ] Run `/skill:deep-interview` on a brownfield prompt and confirm `explore`-backed context appears in the resulting brief
+- [ ] Run `/skill:deep-interview` on a greenfield prompt and confirm profile, ambiguity, readiness gates, pi `ask` tool usage, and canonical artifacts are visible
+- [ ] Run `/skill:deep-interview` on a brownfield prompt and confirm `explore`-backed context appears before the first pi `ask` question
 - [ ] Run `/skill:ralplan` from the resulting brief and confirm the plan cites `source_brief_spec` and inherited boundaries
 - [ ] Run `/skill:ralph` from the resulting brief and confirm verification reports against acceptance criteria and non-goals
 - [ ] Run `/team` with source-brief parameters and confirm saved team state includes `source_brief_spec`, `source_brief_state`, and `source_plan`

@@ -30,4 +30,15 @@ describe("deep-interview skill contract", () => {
       "pressure_passes",
     ]);
   });
+
+  it("uses pi-native question and answer surfaces when available", async () => {
+    const text = await skillTextPromise;
+    assertIncludesAll(text, [
+      "pi `ask` tool",
+      "multi: false",
+      "If `ask` is unavailable",
+      "Wait for the user's answer",
+      "never simulate missing answers",
+    ]);
+  });
 });
